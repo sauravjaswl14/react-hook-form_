@@ -102,3 +102,77 @@ const {register} = form;
 If you haven't noticed, the argument is nothing but the name attribute value that was previously present.
 
 All right, react hook form is now incharge of our form state. But how exactly do we verify that?
+
+## DevTools Visualization
+
+We learnt about the register method in react-hook-form for tracking our form state but we didnot verify that, now we'll verify if the library is indeed managing our form state. The verification will be slightly different. Instead of verifying by writing code, we visualize the form state using the react-hook-form dev tools.
+
+npm install -D @hookform/devtools
+
+import the Devtool component:
+
+import {DevTool} from '@hookform/devtools'
+
+We then invoke the component after the closing form tag
+
+<form>
+.
+.
+
+<DevTool/>
+</form>
+
+finally we need to associate this component with the form we are tracking, for that useForm hook returns a control object that we can destructure from form.
+
+On the devtools component we specify a control prop and assign the control object as value.
+
+<form>
+.
+.
+<DevTool control={control}>
+</form>
+
+we're basically tying together our YouTube form with the dev tools.
+
+If we now head back to the browser, we should see a small icon on the top right corner of the screen.
+click to open and we should see username email and channel which should seem familiar, they are the three fileds in our form.
+If you expand all you will see two properties for each field: touched and dirty
+
+touched indicates whether the field has been interacted with
+dirty indicates whether the field value has changed
+
+## Form state and Rerenders
+
+Previously with the help of react hook form devtools, we were able to clearly see that the library is tracking the field values. What you should also know is that react hook form does this without re-rendering the component, and this is great for performance.
+
+In traditional react forms where you worked with controlled components, every keystroke will cause the component and its children to re-render. React hook form on the other hand does not do that. It follows the uncontrolled inputs behavior. A very important point to keep in mind.
+
+## Form Submission
+
+Now that we know how to manage form state, let's understand how to handle form submissions with react-hook-form. The process involves three simple steps:
+
+step-1: Define the function that should be called when the submit button is pressed
+
+const onSubmit = () => {
+console.log('Form submitted')
+}
+
+step-2: From the form object destructure a function called handleSubmit. listen to the form on submit event and assign handleSubmit as the handler. To handleSubmit, pass the onSubmit function as argument.
+
+const {register, control, handleSubmit} = form
+
+const onSubmit = () => {
+console.log('Form submitted')
+}
+
+<form onSubmit={handleSubmit(onSubmit)}>
+
+By doing this, the onSubmit function automatically receives access too the form data which we can log to the console
+
+step-3 fix the typescript error that has popped up. react-hook-form requires us to define the type of form data being submitted. let's create the form values type at the top.
+
+type FormValues = {
+username: string
+email: string
+channel: string
+}
